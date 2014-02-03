@@ -9,12 +9,14 @@ using CodeTechnologiesWCF.HelperClass.Exams;
 using System.Data;
 using System.Configuration;
 using MySql.Data.MySqlClient;
+using WcfService1;
+using WcfService1.HelperClass;
 
 namespace CodeTechnologiesWCF
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "Service1" in code, svc and config file together.
     // NOTE: In order to launch WCF Test Client for testing this service, please select Service1.svc or Service1.svc.cs at the Solution Explorer and start debugging.
-    public class CodeTechnologiesServices : IExams
+    public class CodeTechnologiesServices : ICodeTechnologiesServices
     {
 
         #region "GetAllExamNature"
@@ -133,7 +135,52 @@ namespace CodeTechnologiesWCF
             }
         }
         #endregion
-        
+
+        #region "GetAllAcademies"
+        public List<Academy> GetAllAcademies()
+        {
+            MySqlConnection connection = new MySqlConnection();
+            List<Academy> academies = new List<Academy>();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "GetAllAcademies";
+                cmd.Connection = connection;
+                MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                da.Fill(ds);
+
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    Academy academyObj = new Academy();
+                    academyObj.Id = Convert.ToInt32(dr["Id"]);
+                    academyObj.Name = dr["Name"].ToString();
+                    academyObj.POCName = dr["POCName"].ToString();
+                    academyObj.Phone = Convert.ToInt32(dr["Phone"]);
+                    academyObj.Email = dr["Email"].ToString();
+                    academyObj.Address = dr["Address"].ToString();
+                    academies.Add(academyObj);
+                }
+                return academies;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+        #endregion
+
+
+       
     }
 
 }

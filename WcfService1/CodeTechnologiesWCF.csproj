@@ -78,9 +78,12 @@
     <Compile Include="CodeTechnologiesServices.svc.cs">
       <DependentUpon>CodeTechnologiesServices.svc</DependentUpon>
     </Compile>
+    <Compile Include="HelperClass\Academy.cs" />
     <Compile Include="HelperClass\Exams\ExamCodes.cs" />
     <Compile Include="HelperClass\Exams\ExamNature.cs" />
     <Compile Include="HelperClass\Exams\ExamsType.cs" />
+    <Compile Include="IAcademy.cs" />
+    <Compile Include="ICodeTechnologiesServices.cs" />
     <Compile Include="IExams.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
