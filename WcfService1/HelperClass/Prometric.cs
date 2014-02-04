@@ -22,7 +22,7 @@ namespace WcfService1.HelperClass
         [DataMember(Order = 5)]
         public string SiteAddress { get; set; }
         [DataMember(Order = 6)]
-        public bool IsHired { get; set; }
+        public Nullable<bool> IsHired { get; set; }
         [DataMember(Order = 7)]
         public string PerExamProfit { get; set; }
         [DataMember(Order = 8)]

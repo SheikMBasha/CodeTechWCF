@@ -409,8 +409,9 @@ namespace CodeTechnologiesWCF
                         cmd.Parameters.AddWithValue("SiteOwnerNameParam", pObj.SiteOwnerName);
                         cmd.ExecuteNonQuery();
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        Console.Write(e);
                     }
                     finally
                     {
