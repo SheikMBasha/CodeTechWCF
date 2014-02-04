@@ -137,10 +137,10 @@ namespace CodeTechnologiesWCF
         #endregion
 
         #region "GetAllAcademies"
-        public List<Academy> GetAllAcademies()
+        public List<AcademyModel> GetAllAcademies()
         {
             MySqlConnection connection = new MySqlConnection();
-            List<Academy> academies = new List<Academy>();
+            List<AcademyModel> academies = new List<AcademyModel>();
             DataSet ds = new DataSet();
             MySqlCommand cmd = new MySqlCommand();
             try
@@ -155,7 +155,7 @@ namespace CodeTechnologiesWCF
 
                 foreach (DataRow dr in ds.Tables[0].Rows)
                 {
-                    Academy academyObj = new Academy();
+                    AcademyModel academyObj = new AcademyModel();
                     academyObj.Id = Convert.ToInt32(dr["Id"]);
                     academyObj.Name = dr["Name"].ToString();
                     academyObj.POCName = dr["POCName"].ToString();
@@ -167,7 +167,7 @@ namespace CodeTechnologiesWCF
                 return academies;
 
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 return null;
             }
@@ -177,7 +177,131 @@ namespace CodeTechnologiesWCF
                 cmd.Dispose();
             }
         }
+
+        public void AdddAcademy(AcademyModel academyObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "AddAcademy";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("NameParam", academyObj.Name);
+                cmd.Parameters.AddWithValue("POCNameParam", academyObj.POCName);
+                cmd.Parameters.AddWithValue("PhoneParam", academyObj.Phone);
+                cmd.Parameters.AddWithValue("EmailParam", academyObj.Email);
+                cmd.Parameters.AddWithValue("AddressParam", academyObj.Address);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public AcademyModel getAcademy(int id)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "GetAcademy";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("academyId", id);
+                MySqlDataAdapter da = new MySqlDataAdapter();
+                da.Fill(ds);
+                AcademyModel academyObj = new AcademyModel();
+                academyObj.Id = Convert.ToInt32(ds.Tables[0].Rows[0]["Id"]);
+                academyObj.Name = ds.Tables[0].Rows[0]["Name"].ToString();
+                academyObj.POCName = ds.Tables[0].Rows[0]["POCName"].ToString();
+                academyObj.Phone= Convert.ToInt32(ds.Tables[0].Rows[0]["Phone"]);
+                academyObj.Email = ds.Tables[0].Rows[0]["Email"].ToString();
+                academyObj.Address = ds.Tables[0].Rows[0]["Address"].ToString();
+
+                return academyObj;
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void UpdateAcademy(AcademyModel academyObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "UpdateAcademy";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("academyId", academyObj.Id);
+                cmd.Parameters.AddWithValue("NameParam", academyObj.Name);
+                cmd.Parameters.AddWithValue("POCNameParam", academyObj.POCName);
+                cmd.Parameters.AddWithValue("PhoneParam", academyObj.Phone);
+                cmd.Parameters.AddWithValue("EmailParam", academyObj.Email);
+                cmd.Parameters.AddWithValue("AddressParam", academyObj.Address);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void DeleteAcademy(int id)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "DeleteAcademy";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("academyId", id);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
         #endregion
+
+
+
 
 
        

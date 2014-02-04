@@ -7,19 +7,19 @@ using System.Web;
 namespace WcfService1.HelperClass
 {
     [DataContract]
-    public class Academy
+    public class AcademyModel
     {
         [DataMember]
         public int Id { get; set; }
-        [DataMember]
+        [DataMember(Order = 1)]
         public string Name { get; set; }
-        [DataMember]
+        [DataMember(Order = 2)]
         public string POCName { get; set; }
-        [DataMember]
+        [DataMember(Order = 3)]
         public int Phone { get; set; }
-        [DataMember]
+        [DataMember(Order = 4)]
         public string Email { get; set; }
-        [DataMember]
+        [DataMember(Order = 5)]
         public string Address { get; set; }
     }
 }

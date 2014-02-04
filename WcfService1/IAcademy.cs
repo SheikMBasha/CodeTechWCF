@@ -12,6 +12,18 @@ namespace WcfService1
     public interface IAcademy
     {
         [OperationContract]
-        List<Academy> GetAllAcademies();
+        List<AcademyModel> GetAllAcademies();
+
+        [OperationContract]
+        void AdddAcademy(AcademyModel academyObj);
+
+        [OperationContract]
+        AcademyModel getAcademy(int id);
+
+        [OperationContract]
+        void UpdateAcademy(AcademyModel academyObj);
+
+        [OperationContract]
+        void DeleteAcademy(int id);
     }
 }
