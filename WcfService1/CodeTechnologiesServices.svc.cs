@@ -300,6 +300,46 @@ namespace CodeTechnologiesWCF
         #endregion
 
 
+        #region "PrometricCandidate"
+            public List<PrometricCandidate> GetAllPrometricCandidates()
+            {
+                using (MySqlConnection connection = new MySqlConnection())
+                {
+                    DataSet ds = new DataSet();
+                    MySqlCommand cmd = new MySqlCommand();
+                    connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                    connection.Open();
+                    List<PrometricCandidate> pcList = new List<PrometricCandidate>();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "GetAllPrometricCandidates";
+                    cmd.Connection = connection;
+                    MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                    da.Fill(ds);
+
+                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+                        PrometricCandidate pcObj = new PrometricCandidate();
+                        pcObj.Id = Convert.ToInt32(dr["Id"]);
+                        pcObj.Name = dr["Name"].ToString();
+                        pcObj.ExamNature = dr["ExamNature"].ToString();
+                        pcObj.CandidateId = dr["CandidateId"].ToString();
+                        pcObj.ExamStatus = dr["ExamStatus"].ToString();
+                        pcObj.Attempts = (dr["Attempts"].ToString() == String.Empty) ? String.Empty : dr["Attempts"].ToString();
+                        pcObj.ExamDate = (dr["ExamDate"] == DBNull.Value ) ? DateTime.MinValue : Convert.ToDateTime(dr["ExamDate"]);
+                        pcObj.EmailAddress = dr["EmailAddress"].ToString();
+                        pcObj.Address = (dr["Address"].ToString() == String.Empty) ? String.Empty : dr["Address"].ToString();
+                        pcObj.Phone = (dr["Phone"].ToString() == String.Empty) ? 0 : Convert.ToInt32(dr["Phone"]);
+                        pcObj.InstituteId = Convert.ToInt32(dr["InstituteId"]);
+                        pcObj.SiteId = Convert.ToInt32(dr["SiteId"]);
+
+                        pcList.Add(pcObj);
+                    }
+                    return pcList;
+                }
+                
+            }
+        #endregion
+
 
 
 

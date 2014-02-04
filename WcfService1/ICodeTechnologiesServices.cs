@@ -9,7 +9,7 @@ using System.ServiceModel;
 namespace WcfService1
 {
     [ServiceContract]
-    public interface ICodeTechnologiesServices : IExams, IAcademy
+    public interface ICodeTechnologiesServices : IExams, IAcademy, IPrometricCandidate
     {
     }
 }
