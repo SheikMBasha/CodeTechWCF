@@ -209,39 +209,38 @@ namespace CodeTechnologiesWCF
 
         public AcademyModel getAcademy(int id)
         {
-            MySqlConnection connection = new MySqlConnection();
-            DataSet ds = new DataSet();
-            MySqlCommand cmd = new MySqlCommand();
-            try
+            using (MySqlConnection connection = new MySqlConnection())
             {
-                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
-                connection.Open();
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "GetAcademy";
-                cmd.Connection = connection;
-                cmd.Parameters.AddWithValue("academyId", id);
-                MySqlDataAdapter da = new MySqlDataAdapter();
-                da.Fill(ds);
-                AcademyModel academyObj = new AcademyModel();
-                academyObj.Id = Convert.ToInt32(ds.Tables[0].Rows[0]["Id"]);
-                academyObj.Name = ds.Tables[0].Rows[0]["Name"].ToString();
-                academyObj.POCName = ds.Tables[0].Rows[0]["POCName"].ToString();
-                academyObj.Phone= Convert.ToInt32(ds.Tables[0].Rows[0]["Phone"]);
-                academyObj.Email = ds.Tables[0].Rows[0]["Email"].ToString();
-                academyObj.Address = ds.Tables[0].Rows[0]["Address"].ToString();
+                DataSet ds = new DataSet();
+                MySqlCommand cmd = new MySqlCommand();
+                try
+                {
+                    connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                    connection.Open();
+                    cmd.Connection = connection;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "GetAcademy";
+                    cmd.Parameters.AddWithValue("@academyId", id);
+                    MySqlDataAdapter da = new MySqlDataAdapter();
+                    da.SelectCommand = cmd;
+                    da.Fill(ds);
+                    AcademyModel academyObj = new AcademyModel();
+                    academyObj.Id = Convert.ToInt32(ds.Tables[0].Rows[0]["Id"]);
+                    academyObj.Name = ds.Tables[0].Rows[0]["Name"].ToString();
+                    academyObj.POCName = ds.Tables[0].Rows[0]["POCName"].ToString();
+                    academyObj.Phone = Convert.ToInt32(ds.Tables[0].Rows[0]["Phone"]);
+                    academyObj.Email = ds.Tables[0].Rows[0]["Email"].ToString();
+                    academyObj.Address = ds.Tables[0].Rows[0]["Address"].ToString();
 
-                return academyObj;
+                    return academyObj;
 
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
             }
-            catch (Exception)
-            {
-                return null;
-            }
-            finally
-            {
-                connection.Close();
-                cmd.Dispose();
-            }
+           
         }
 
         public void UpdateAcademy(AcademyModel academyObj)
