@@ -340,10 +340,198 @@ namespace CodeTechnologiesWCF
             }
         #endregion
 
+            #region "Prometric"
+                public List<Prometric> GetAllPrometrics()
+                {
+                    MySqlConnection connection = new MySqlConnection();
+                    List<Prometric> prometricList = new List<Prometric>();
+                    DataSet ds = new DataSet();
+                    MySqlCommand cmd = new MySqlCommand();
+                    try
+                    {
+                        connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                        connection.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.CommandText = "GetAllPrometrics";
+                        cmd.Connection = connection;
+                        MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                        da.Fill(ds);
+
+                        foreach (DataRow dr in ds.Tables[0].Rows)
+                        {
+                            Prometric prometricObj = new Prometric();
+                            prometricObj.SiteId = Convert.ToInt32(dr["SiteId"]);
+                            prometricObj.Name = dr["Name"].ToString();
+                            prometricObj.POCName = dr["POCName"].ToString();
+                            prometricObj.POCEmail = dr["POCEmail"].ToString();
+                            prometricObj.SiteAddress = dr["SiteAddress"].ToString();
+                            prometricObj.IsHired = Convert.ToBoolean(dr["IsHired"]);
+                            prometricObj.PerExamProfit = dr["PerExamProfit"].ToString();
+                            prometricObj.TCAAdminId = Convert.ToInt32(dr["TCAAdminId"]);
+                            prometricObj.SiteOwnerName = dr["SiteOwnerName"].ToString();
+                            prometricList.Add(prometricObj);
+                        }
+                        return prometricList;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        return null;
+                    }
+                    finally
+                    {
+                        connection.Close();
+                        cmd.Dispose();
+                    }
+                }
+
+                public void AddPrometric(Prometric pObj)
+                {
+                    MySqlConnection connection = new MySqlConnection();
+                    DataSet ds = new DataSet();
+                    MySqlCommand cmd = new MySqlCommand();
+                    try
+                    {
+                        connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                        connection.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.CommandText = "AddPrometric";
+                        cmd.Connection = connection;
+                        cmd.Parameters.AddWithValue("SiteIdParam", pObj.SiteId);
+                        cmd.Parameters.AddWithValue("NameParam", pObj.Name);
+                        cmd.Parameters.AddWithValue("POCNameParam", pObj.POCName);
+                        cmd.Parameters.AddWithValue("POCPhoneParam", pObj.POCPhone);
+                        cmd.Parameters.AddWithValue("POCEmailParam", pObj.POCEmail);
+                        cmd.Parameters.AddWithValue("SiteAddressParam", pObj.SiteAddress);
+                        cmd.Parameters.AddWithValue("IsHiredParam", pObj.IsHired);
+                        cmd.Parameters.AddWithValue("PerExamProfitParam", pObj.PerExamProfit);
+                        cmd.Parameters.AddWithValue("TCAAdminIdParam", pObj.TCAAdminId);
+                        cmd.Parameters.AddWithValue("SiteOwnerNameParam", pObj.SiteOwnerName);
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    finally
+                    {
+                        connection.Close();
+                        cmd.Dispose();
+                    }
+                }
+
+                public Prometric getPrometric(int id)
+                {
+                    using (MySqlConnection connection = new MySqlConnection())
+                    {
+                        DataSet ds = new DataSet();
+                        MySqlCommand cmd = new MySqlCommand();
+                        try
+                        {
+                            connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                            connection.Open();
+                            cmd.Connection = connection;
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.CommandText = "GetPrometric";
+                            cmd.Parameters.AddWithValue("siteIdParam", id);
+                            MySqlDataAdapter da = new MySqlDataAdapter();
+                            da.SelectCommand = cmd;
+                            da.Fill(ds);
+                            Prometric pObj = new Prometric();
+                            pObj.SiteId = Convert.ToInt32(ds.Tables[0].Rows[0]["SiteId"]);
+                            pObj.Name = ds.Tables[0].Rows[0]["Name"].ToString();
+                            pObj.POCName = ds.Tables[0].Rows[0]["POCName"].ToString();
+                            pObj.POCPhone = Convert.ToInt32(ds.Tables[0].Rows[0]["POCPhone"]);
+                            pObj.POCEmail = ds.Tables[0].Rows[0]["POCEmail"].ToString();
+                            pObj.SiteAddress = ds.Tables[0].Rows[0]["SiteAddress"].ToString();
+                            pObj.IsHired = Convert.ToBoolean(ds.Tables[0].Rows[0]["IsHired"]);
+                            pObj.PerExamProfit = ds.Tables[0].Rows[0]["PerExamProfit"].ToString();
+                            pObj.TCAAdminId = Convert.ToInt32(ds.Tables[0].Rows[0]["TCAAdminId"]);
+                            pObj.SiteOwnerName = ds.Tables[0].Rows[0]["SiteOwnerName"].ToString();
+
+                            return pObj;
+
+                        }
+                        catch (Exception e)
+                        {
+                            return null;
+                        }
+                    }
+                }
+
+                public void UpdatePrometric(Prometric pObj)
+                {
+                    MySqlConnection connection = new MySqlConnection();
+                    DataSet ds = new DataSet();
+                    MySqlCommand cmd = new MySqlCommand();
+                    try
+                    {
+                        connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                        connection.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.CommandText = "UpdatePrometric";
+                        cmd.Connection = connection;
+                        cmd.Parameters.AddWithValue("SiteIdParam", pObj.SiteId);
+                        cmd.Parameters.AddWithValue("NameParam", pObj.Name);
+                        cmd.Parameters.AddWithValue("POCNameParam", pObj.POCName);
+                        cmd.Parameters.AddWithValue("POCPhoneParam", pObj.POCPhone);
+                        cmd.Parameters.AddWithValue("POCEmailParam", pObj.POCEmail);
+                        cmd.Parameters.AddWithValue("SiteAddressParam", pObj.SiteAddress);
+                        cmd.Parameters.AddWithValue("IsHiredParam", pObj.IsHired);
+                        cmd.Parameters.AddWithValue("PerExamProfitParam", pObj.PerExamProfit);
+                        cmd.Parameters.AddWithValue("TCAAdminIdParam", pObj.TCAAdminId);
+                        cmd.Parameters.AddWithValue("SiteOwnerNameParam", pObj.SiteOwnerName);
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    finally
+                    {
+                        connection.Close();
+                        cmd.Dispose();
+                    }
+                }
+                public void DeletePrometric(int id)
+                {
+                    MySqlConnection connection = new MySqlConnection();
+                    DataSet ds = new DataSet();
+                    MySqlCommand cmd = new MySqlCommand();
+                    try
+                    {
+                        connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                        connection.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.CommandText = "DeletePrometric";
+                        cmd.Connection = connection;
+                        cmd.Parameters.AddWithValue("SiteIdParam", id);
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    finally
+                    {
+                        connection.Close();
+                        cmd.Dispose();
+                    }
+                }
+            #endregion
 
 
 
-       
+
+
+
+
+
+
+
+
+               
+
+                
+
+               
     }
 
 }
