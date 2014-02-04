@@ -84,11 +84,13 @@
     <Compile Include="HelperClass\Exams\ExamsType.cs" />
     <Compile Include="HelperClass\Prometric.cs" />
     <Compile Include="HelperClass\PrometricCandidate.cs" />
+    <Compile Include="HelperClass\PrometricPromotions.cs" />
     <Compile Include="IAcademy.cs" />
     <Compile Include="ICodeTechnologiesServices.cs" />
     <Compile Include="IExams.cs" />
     <Compile Include="IPrometric.cs" />
     <Compile Include="IPrometricCandidate.cs" />
+    <Compile Include="IPrometricPromotions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

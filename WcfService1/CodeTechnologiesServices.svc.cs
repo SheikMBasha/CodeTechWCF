@@ -340,7 +340,7 @@ namespace CodeTechnologiesWCF
             }
         #endregion
 
-            #region "Prometric"
+        #region "Prometric"
                 public List<Prometric> GetAllPrometrics()
                 {
                     MySqlConnection connection = new MySqlConnection();
@@ -365,7 +365,7 @@ namespace CodeTechnologiesWCF
                             prometricObj.POCName = dr["POCName"].ToString();
                             prometricObj.POCEmail = dr["POCEmail"].ToString();
                             prometricObj.SiteAddress = dr["SiteAddress"].ToString();
-                            prometricObj.IsHired = Convert.ToBoolean(dr["IsHired"]);
+                            prometricObj.IsHired = (dr["IsHired"] == DBNull.Value)? false :Convert.ToBoolean(dr["IsHired"]);
                             prometricObj.PerExamProfit = dr["PerExamProfit"].ToString();
                             prometricObj.TCAAdminId = Convert.ToInt32(dr["TCAAdminId"]);
                             prometricObj.SiteOwnerName = dr["SiteOwnerName"].ToString();
@@ -528,11 +528,78 @@ namespace CodeTechnologiesWCF
 
 
 
-               
 
-                
 
-               
+
+
+
+
+                public List<PrometricPromotions> getAllPrometricPromotions()
+                {
+                    MySqlConnection connection = new MySqlConnection();
+                    List<PrometricPromotions> ppList = new List<PrometricPromotions>();
+                    DataSet ds = new DataSet();
+                    MySqlCommand cmd = new MySqlCommand();
+                    try
+                    {
+                        connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                        connection.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.CommandText = "GetAllPrometricPromotions";
+                        cmd.Connection = connection;
+                        MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                        da.Fill(ds);
+
+                        foreach (DataRow dr in ds.Tables[0].Rows)
+                        {
+                            PrometricPromotions ppObj = new PrometricPromotions();
+                            ppObj.id = Convert.ToInt32(dr["Id"]);
+                            ppObj.SiteId = Convert.ToInt32(dr["SiteId"]);
+                            ppObj.DateFrom = (dr["DateFrom"] == DBNull.Value) ? DateTime.MinValue : Convert.ToDateTime(dr["DateFrom"]);
+                            ppObj.DateTo = (dr["DateTo"] == DBNull.Value) ? DateTime.MinValue : Convert.ToDateTime(dr["DateTo"]);
+                            ppObj.MarginGain = Convert.ToInt32(dr["MarginGain"]);
+                            ppObj.MarginMiss = Convert.ToInt32(dr["MarginMiss"]);
+                            ppList.Add(ppObj); 
+                        }
+                        return ppList;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        return null;
+                    }
+                    finally
+                    {
+                        connection.Close();
+                        cmd.Dispose();
+                    }
+        
+                }
+
+                public List<PrometricPromotions> getPrometricPromotionWithSiteId(int id)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void AddPrometricPromotion(PrometricPromotions ppObj)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public PrometricPromotions getPrometricPromotion(int id)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void UpdatePrometricPromotion(PrometricPromotions ppObj)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public void DeletePrometricPromotion(int id)
+                {
+                    throw new NotImplementedException();
+                }
     }
 
 }
