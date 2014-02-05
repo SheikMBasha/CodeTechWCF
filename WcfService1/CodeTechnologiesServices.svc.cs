@@ -323,7 +323,7 @@ namespace CodeTechnologiesWCF
                     PrometricCandidate pcObj = new PrometricCandidate();
                     pcObj.Id = Convert.ToInt32(dr["Id"]);
                     pcObj.Name = dr["Name"].ToString();
-                    pcObj.ExamNature = dr["ExamNature"].ToString();
+                    pcObj.ExamNature = Convert.ToInt32(dr["ExamNature"]);
                     pcObj.CandidateId = dr["CandidateId"].ToString();
                     pcObj.ExamStatus = dr["ExamStatus"].ToString();
                     pcObj.Attempts = (dr["Attempts"].ToString() == String.Empty) ? String.Empty : dr["Attempts"].ToString();
@@ -331,7 +331,7 @@ namespace CodeTechnologiesWCF
                     pcObj.EmailAddress = dr["EmailAddress"].ToString();
                     pcObj.Address = (dr["Address"].ToString() == String.Empty) ? String.Empty : dr["Address"].ToString();
                     pcObj.Phone = (dr["Phone"].ToString() == String.Empty) ? 0 : Convert.ToInt32(dr["Phone"]);
-                    pcObj.InstituteId = Convert.ToInt32(dr["InstituteId"]);
+                    pcObj.InstituteId = (dr["InstituteId"] == DBNull.Value) ? 0 : Convert.ToInt32(dr["InstituteId"]);
                     pcObj.SiteId = Convert.ToInt32(dr["SiteId"]);
 
                     pcList.Add(pcObj);
@@ -351,23 +351,37 @@ namespace CodeTechnologiesWCF
                 connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
                 connection.Open();
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "UpdatePrometric";
+                cmd.CommandText = "AddPrometricCandidate";
                 cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("SiteIdParam", pcObj.SiteId);
+                cmd.Parameters.AddWithValue("NameParam", pcObj.Name);
+                cmd.Parameters.AddWithValue("ExamNatureParam", pcObj.ExamNature);
+                cmd.Parameters.AddWithValue("ExamIdParam", pcObj.ExamId);
+                cmd.Parameters.AddWithValue("CandidateIdParam", pcObj.CandidateId);
+                cmd.Parameters.AddWithValue("InstituteId", pcObj.InstituteId);
+                cmd.ExecuteNonQuery();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.Write(e);
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
             }
         }
 
         public void BulkUploadPrometricCandidates(FileData inputexcel)
         {
             bool result = false;
+            string FilePath = HostingEnvironment.MapPath("~/App_Data/ExcelFiles/" + inputexcel.FileName);
             try
             {
-                string FilePath = "";// Path.Combine("~/App_Data/ExcelFiles/", inputexcel.FileName);
-                FilePath = HostingEnvironment.MapPath("~/App_Data/ExcelFiles/" + inputexcel.FileName);//System.Web.Hosting.HostingEnvironment.MapPath
-                if (System.IO.File.Exists(FilePath))
-                    System.IO.File.Delete(FilePath);
+                //string FilePath = "";// Path.Combine("~/App_Data/ExcelFiles/", inputexcel.FileName);
+                
+                //if (System.IO.File.Exists(FilePath))
+                //    System.IO.File.Delete(FilePath);
 
                 if (inputexcel.FilePosition == 0)
                     File.Create(FilePath).Close();
@@ -422,12 +436,12 @@ namespace CodeTechnologiesWCF
                     int instituteId = getInstituteId(instituteName);
                     pcObj.InstituteId = instituteId;
                     pcObj.Name = ds.Tables[0].Rows[i]["Name"].ToString();
-                    pcObj.ExamNature = ds.Tables[0].Rows[i]["ExamNature"].ToString();
+                    pcObj.ExamNature = Convert.ToInt32(ds.Tables[0].Rows[i]["ExamNature"]);
                     pcObj.ExamId = ds.Tables[0].Rows[i]["ExamId"].ToString();
                     pcObj.CandidateId = ds.Tables[0].Rows[i]["CandidateId"].ToString();
-                    //Need To do with SP
+                    //Need To get siteId with SP
                     pcObj.SiteId = 101;
-
+                    AddPrometricCandidate(pcObj);
 
                 }
             }
@@ -437,6 +451,10 @@ namespace CodeTechnologiesWCF
                 ed.ErrorCode = 1001;
                 ed.ErrorMessage = e.Message;
                 throw new FaultException<ErrorDetails>(ed);
+            }
+            finally
+            {
+                
             }
         }
 

@@ -14,7 +14,7 @@ namespace WcfService1.HelperClass
         [DataMember(Order = 1)]
         public string Name { get; set; }
         [DataMember(Order = 2)]
-        public string ExamNature { get; set; }
+        public int ExamNature { get; set; }
         [DataMember(Order = 3)]
         public string ExamId { get; set; }
         [DataMember(Order = 4)]
