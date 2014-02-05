@@ -15,7 +15,7 @@ namespace WcfService1
         List<PrometricPromotions> getAllPrometricPromotions();
 
         [OperationContract]
-        List<PrometricPromotions> getPrometricPromotionWithSiteId(int id);
+        List<PrometricPromotions> getPrometricPromotionWithSiteId(int? id);
 
         [OperationContract]
         void AddPrometricPromotion(PrometricPromotions ppObj);

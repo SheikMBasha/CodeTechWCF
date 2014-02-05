@@ -13,5 +13,8 @@ namespace WcfService1
     {
         [OperationContract]
         List<PrometricCandidate> GetAllPrometricCandidates();
+
+        [OperationContract]
+        void BulkUploadPrometricCandidates(FileData inputexcel);
     }
 }

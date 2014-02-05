@@ -88,6 +88,7 @@
     <Compile Include="IAcademy.cs" />
     <Compile Include="ICodeTechnologiesServices.cs" />
     <Compile Include="IExams.cs" />
+    <Compile Include="IFileUploadService.cs" />
     <Compile Include="IPrometric.cs" />
     <Compile Include="IPrometricCandidate.cs" />
     <Compile Include="IPrometricPromotions.cs" />
