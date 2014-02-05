@@ -82,6 +82,7 @@
     <Compile Include="HelperClass\Exams\ExamCodes.cs" />
     <Compile Include="HelperClass\Exams\ExamNature.cs" />
     <Compile Include="HelperClass\Exams\ExamsType.cs" />
+    <Compile Include="HelperClass\Institute.cs" />
     <Compile Include="HelperClass\Prometric.cs" />
     <Compile Include="HelperClass\PrometricCandidate.cs" />
     <Compile Include="HelperClass\PrometricPromotions.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="ICodeTechnologiesServices.cs" />
     <Compile Include="IExams.cs" />
     <Compile Include="IFileUploadService.cs" />
+    <Compile Include="IInstitute.cs" />
     <Compile Include="IPrometric.cs" />
     <Compile Include="IPrometricCandidate.cs" />
     <Compile Include="IPrometricPromotions.cs" />

@@ -650,7 +650,6 @@ namespace CodeTechnologiesWCF
         }
         #endregion
 
-
         #region "PrometricPromotions"
         public List<PrometricPromotions> getAllPrometricPromotions()
         {
@@ -864,7 +863,60 @@ namespace CodeTechnologiesWCF
         }
         #endregion
 
+        #region "Institute"
+        public List<Institute> GetAllInstitutes()
+        {
+            throw new NotImplementedException();
+        }
 
+        public void AddInstitute(Institute instiObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "AddInstitute";
+                cmd.Connection = connection;                
+                cmd.Parameters.AddWithValue("NameParam", instiObj.Name);
+                cmd.Parameters.AddWithValue("POCNameParam", instiObj.POCName);
+                cmd.Parameters.AddWithValue("PhoneParam", instiObj.Phone);
+                cmd.Parameters.AddWithValue("EmailParam", instiObj.Email);
+                cmd.Parameters.AddWithValue("AddressParam", instiObj.Address);
+                cmd.Parameters.AddWithValue("CreditAllowedParam", instiObj.CreditAllowed);
+                cmd.Parameters.AddWithValue("CreditRemainingParam", instiObj.CreditRemaining);                
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }            
+        }
+
+        public Institute getInstitute(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateInstitute(Institute instiObj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteInstitute(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
-
+        
 }
