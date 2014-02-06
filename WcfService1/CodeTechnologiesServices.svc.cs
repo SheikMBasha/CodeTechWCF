@@ -209,6 +209,37 @@ namespace CodeTechnologiesWCF
             }
         }
 
+        public int getAcademyId(string name)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "GetAcademyId";
+                cmd.Parameters.AddWithValue("AcademyNameParam", name);
+                cmd.Connection = connection;
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    return Convert.ToInt32(dr["Id"]);
+                }
+
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+            return 0;
+        }
+
         public AcademyModel getAcademy(int id)
         {
             using (MySqlConnection connection = new MySqlConnection())
@@ -364,6 +395,104 @@ namespace CodeTechnologiesWCF
             catch (Exception e)
             {
                 Console.Write(e);
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public PrometricCandidate getPrometricCandidate(int id)
+        {
+            using (MySqlConnection connection = new MySqlConnection())
+            {
+                DataSet ds = new DataSet();
+                MySqlCommand cmd = new MySqlCommand();
+                try
+                {
+                    connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                    connection.Open();
+                    cmd.Connection = connection;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "getPrometricCandidate";
+                    cmd.Parameters.AddWithValue("IdParam", id);
+                    MySqlDataAdapter da = new MySqlDataAdapter();
+                    da.SelectCommand = cmd;
+                    da.Fill(ds);
+                    PrometricCandidate pcObj = new PrometricCandidate();
+                    pcObj.Id = Convert.ToInt32(ds.Tables[0].Rows[0]["Id"]);
+                    pcObj.Name = ds.Tables[0].Rows[0]["Name"].ToString();
+                    pcObj.ExamNature = Convert.ToInt32(ds.Tables[0].Rows[0]["ExamNature"]);
+                    pcObj.CandidateId = ds.Tables[0].Rows[0]["CandidateId"].ToString();
+                    pcObj.ExamStatus = ds.Tables[0].Rows[0]["ExamStatus"].ToString();
+                    pcObj.Attempts = (ds.Tables[0].Rows[0]["Attempts"].ToString() == String.Empty) ? String.Empty : ds.Tables[0].Rows[0]["Attempts"].ToString();
+                    pcObj.ExamDate = (ds.Tables[0].Rows[0]["ExamDate"] == DBNull.Value) ? DateTime.MinValue : Convert.ToDateTime(ds.Tables[0].Rows[0]["ExamDate"]);
+                    pcObj.EmailAddress = ds.Tables[0].Rows[0]["EmailAddress"].ToString();
+                    pcObj.Address = (ds.Tables[0].Rows[0]["Address"].ToString() == String.Empty) ? String.Empty : ds.Tables[0].Rows[0]["Address"].ToString();
+                    pcObj.Phone = (ds.Tables[0].Rows[0]["Phone"].ToString() == String.Empty) ? 0 : Convert.ToInt32(ds.Tables[0].Rows[0]["Phone"]);
+                    pcObj.InstituteId = (ds.Tables[0].Rows[0]["InstituteId"] == DBNull.Value) ? 0 : Convert.ToInt32(ds.Tables[0].Rows[0]["InstituteId"]);
+                    pcObj.SiteId = Convert.ToInt32(ds.Tables[0].Rows[0]["SiteId"]);
+
+                    return pcObj;
+
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
+
+        public void UpdatePrometricCandidate(PrometricCandidate pcObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "UpdatePrometricCandidate";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("IdParam", pcObj.Id);
+                cmd.Parameters.AddWithValue("SiteIdParam", pcObj.SiteId);
+                cmd.Parameters.AddWithValue("NameParam", pcObj.Name);
+                cmd.Parameters.AddWithValue("ExamNatureParam", pcObj.ExamNature);
+                cmd.Parameters.AddWithValue("ExamIdParam", pcObj.ExamId);
+                cmd.Parameters.AddWithValue("CandidateIdParam", pcObj.CandidateId);
+                cmd.Parameters.AddWithValue("InstituteId", pcObj.InstituteId);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void DeletePrometricCandidate(int id)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "DeletePrometricCandidate";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("IdParam", id);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
             }
             finally
             {
@@ -934,6 +1063,427 @@ namespace CodeTechnologiesWCF
             throw new NotImplementedException();
         }
 
+        #endregion
+
+        #region "Expenses"
+        public List<Expense> getAllExpenses()
+        {
+            MySqlConnection connection = new MySqlConnection();
+            List<Expense> expenses = new List<Expense>();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "GetAllExpenses";
+                cmd.Connection = connection;
+                MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                da.Fill(ds);
+
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    Expense expenseObj = new Expense();
+                    expenseObj.Id = Convert.ToInt32(dr["Id"]);
+                    expenseObj.ExpenseType = dr["ExpenseType"].ToString();
+                    expenseObj.AmountPaid = Convert.ToInt32(dr["AmountPaid"]);
+                    expenseObj.Date = Convert.ToDateTime(dr["Date"]);
+                    expenseObj.PaymentChannel = dr["PaymentChannel"].ToString();
+                    expenseObj.SiteId = Convert.ToInt32(dr["SiteId"]);
+                    expenses.Add(expenseObj);
+                }
+                return expenses;
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public Expense getExpense(int id)
+        {
+            using (MySqlConnection connection = new MySqlConnection())
+            {
+                DataSet ds = new DataSet();
+                MySqlCommand cmd = new MySqlCommand();
+                try
+                {
+                    connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                    connection.Open();
+                    cmd.Connection = connection;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "GetExpense";
+                    cmd.Parameters.AddWithValue("IdParam", id);
+                    MySqlDataAdapter da = new MySqlDataAdapter();
+                    da.SelectCommand = cmd;
+                    da.Fill(ds);
+                    Expense expenseObj = new Expense();
+                    expenseObj.Id = Convert.ToInt32(ds.Tables[0].Rows[0]["Id"]);
+                    expenseObj.ExpenseType = ds.Tables[0].Rows[0]["ExpenseType"].ToString();
+                    expenseObj.AmountPaid = Convert.ToInt32(ds.Tables[0].Rows[0]["AmountPaid"]);
+                    expenseObj.Date = Convert.ToDateTime(ds.Tables[0].Rows[0]["Date"]);
+                    expenseObj.PaymentChannel = ds.Tables[0].Rows[0]["PaymentChannel"].ToString();
+                    expenseObj.SiteId = Convert.ToInt32(ds.Tables[0].Rows[0]["SiteId"]);
+
+                    return expenseObj;
+
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
+
+        public void AddExpense(Expense expObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "AddExpense";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("ExpenseTypeParam", expObj.ExpenseType);
+                cmd.Parameters.AddWithValue("AmountPaidParam", expObj.AmountPaid);
+                cmd.Parameters.AddWithValue("DateParam", expObj.Date);
+                cmd.Parameters.AddWithValue("PaymentChannelParam", expObj.PaymentChannel);
+                cmd.Parameters.AddWithValue("SiteIdParam", expObj.SiteId);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void UpdateExpense(Expense expObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "UpdateExpense";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("IdParam", expObj.Id);
+                cmd.Parameters.AddWithValue("ExpenseTypeParam", expObj.ExpenseType);
+                cmd.Parameters.AddWithValue("AmountPaidParam", expObj.AmountPaid);
+                cmd.Parameters.AddWithValue("DateParam", expObj.Date);
+                cmd.Parameters.AddWithValue("PaymentChannelParam", expObj.PaymentChannel);
+                cmd.Parameters.AddWithValue("SiteIdParam", expObj.SiteId);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void DeleteExpense(int id)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "DeleteExpense";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("IdParam", id);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+        #endregion
+
+        #region "PearsonCandidate"
+        public List<PearsonCandidate> GetAllPearsonCandidates()
+        {
+            using (MySqlConnection connection = new MySqlConnection())
+            {
+                DataSet ds = new DataSet();
+                MySqlCommand cmd = new MySqlCommand();
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                List<PearsonCandidate> pcList = new List<PearsonCandidate>();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "GetAllPearsonCandidates";
+                cmd.Connection = connection;
+                MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                da.Fill(ds);
+
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    PearsonCandidate pcObj = new PearsonCandidate();
+                    pcObj.Id = Convert.ToInt32(dr["Id"]);
+                    pcObj.FirstName = dr["FirstName"].ToString();
+                    pcObj.LastName = dr["LastName"].ToString();
+                    pcObj.ExamNature = Convert.ToInt32(dr["ExamNature"]);
+                    pcObj.CiscoClientId = dr["CiscoClientId"].ToString();
+                    pcObj.ExamStatus = dr["ExamStatus"].ToString();
+                    pcObj.Attempts = (dr["Attempts"].ToString() == String.Empty) ? String.Empty : dr["Attempts"].ToString();
+                    pcObj.ExamDate = (dr["ExamDate"] == DBNull.Value) ? DateTime.MinValue : Convert.ToDateTime(dr["ExamDate"]);
+                    pcObj.EmailAddress = dr["EmailAddress"].ToString();
+                    pcObj.Address = (dr["Address"].ToString() == String.Empty) ? String.Empty : dr["Address"].ToString();
+                    pcObj.Phone = (dr["Phone"].ToString() == String.Empty) ? 0 : Convert.ToInt32(dr["Phone"]);
+                    pcObj.InstituteId = (dr["InstituteId"] == DBNull.Value) ? 0 : Convert.ToInt32(dr["InstituteId"]);
+                    pcObj.AcademyId = Convert.ToInt32(dr["AcademyId"]);
+                    pcObj.SiteId = Convert.ToInt32(dr["SiteId"]);
+
+                    pcList.Add(pcObj);
+                }
+                return pcList;
+            }
+        }
+
+        public void BulkUploadPearsonCandidates(FileData inputexcel)
+        {
+            bool result = false;
+            string FilePath = HostingEnvironment.MapPath("~/App_Data/ExcelFiles/" + inputexcel.FileName);
+            try
+            {
+                //string FilePath = "";// Path.Combine("~/App_Data/ExcelFiles/", inputexcel.FileName);
+
+                //if (System.IO.File.Exists(FilePath))
+                //    System.IO.File.Delete(FilePath);
+
+                if (inputexcel.FilePosition == 0)
+                    File.Create(FilePath).Close();
+
+                using (FileStream fileStream = new FileStream(FilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
+                {
+                    fileStream.Seek(inputexcel.FilePosition, SeekOrigin.Begin);
+                    fileStream.Write(inputexcel.BufferData, 0, inputexcel.BufferData.Length);
+                }
+
+                /* Excel Upload */
+                string excelConnectionString = String.Empty;
+                string fileExtension = Path.GetExtension(inputexcel.FileName);
+                excelConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FilePath + ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
+                if (fileExtension == ".xls")
+                {
+                    excelConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FilePath + ";Extended Properties=\"Excel 8.0;HDR=Yes;IMEX=2\"";
+                }
+                else if (fileExtension == ".xlsx")
+                {
+
+                    excelConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FilePath + ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
+                }
+                OleDbConnection excelConnection = new OleDbConnection(excelConnectionString);
+                excelConnection.Open();
+                DataTable dt = new DataTable();
+
+                dt = excelConnection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                if (dt == null)
+                {
+                    //return null;
+                }
+                String[] excelSheets = new String[dt.Rows.Count];
+                int t = 0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    excelSheets[t] = row["TABLE_NAME"].ToString();
+                    t++;
+                }
+                OleDbConnection excelConnection1 = new OleDbConnection(excelConnectionString);
+                DataSet ds = new DataSet();
+
+                string query = string.Format("Select * from [{0}]", excelSheets[0]);
+                using (OleDbDataAdapter dataAdapter = new OleDbDataAdapter(query, excelConnection1))
+                {
+                    dataAdapter.Fill(ds);
+                }
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    PearsonCandidate pcObj = new PearsonCandidate();
+                    string instituteName = ds.Tables[0].Rows[i]["InstituteName"].ToString();
+                    int instituteId = getInstituteId(instituteName);
+                    pcObj.InstituteId = instituteId;
+                    pcObj.FirstName = ds.Tables[0].Rows[i]["FirstName"].ToString();
+                    pcObj.LastName = ds.Tables[0].Rows[i]["LastName"].ToString();
+                    pcObj.ExamNature = Convert.ToInt32(ds.Tables[0].Rows[i]["ExamNature"]);
+                    pcObj.ExamId = ds.Tables[0].Rows[i]["ExamId"].ToString();
+                    pcObj.AcademyId = getAcademyId(ds.Tables[0].Rows[i]["AcademyName"].ToString());
+                    //Need To get siteId with SP
+                    pcObj.SiteId = 101;
+                    AddPearsonCandidate(pcObj);
+
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorDetails ed = new ErrorDetails();
+                ed.ErrorCode = 1001;
+                ed.ErrorMessage = e.Message;
+                throw new FaultException<ErrorDetails>(ed);
+            }
+            finally
+            {
+
+            }
+        }
+
+        public void AddPearsonCandidate(PearsonCandidate pcObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "AddPearsonCandidate";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("SiteIdParam", pcObj.SiteId);
+                cmd.Parameters.AddWithValue("FirstNameParam", pcObj.FirstName);
+                cmd.Parameters.AddWithValue("LastNameParam", pcObj.LastName);
+                cmd.Parameters.AddWithValue("ExamNatureParam", pcObj.ExamNature);
+                cmd.Parameters.AddWithValue("ExamIdParam", pcObj.ExamId);
+                cmd.Parameters.AddWithValue("InstituteIdParam", pcObj.InstituteId);
+                cmd.Parameters.AddWithValue("AcademyIdParam", pcObj.AcademyId);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public PearsonCandidate getPearsonCandidate(int id)
+        {
+            using (MySqlConnection connection = new MySqlConnection())
+            {
+                DataSet ds = new DataSet();
+                MySqlCommand cmd = new MySqlCommand();
+                try
+                {
+                    connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                    connection.Open();
+                    cmd.Connection = connection;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "getPrometricCandidate";
+                    cmd.Parameters.AddWithValue("IdParam", id);
+                    MySqlDataAdapter da = new MySqlDataAdapter();
+                    da.SelectCommand = cmd;
+                    da.Fill(ds);
+                    PearsonCandidate pcObj = new PearsonCandidate();
+                    pcObj.Id = Convert.ToInt32(ds.Tables[0].Rows[0]["Id"]);
+                    pcObj.FirstName = ds.Tables[0].Rows[0]["FirstName"].ToString();
+                    pcObj.LastName = ds.Tables[0].Rows[0]["LastName"].ToString();
+                    pcObj.ExamNature = Convert.ToInt32(ds.Tables[0].Rows[0]["ExamNature"]);
+                    pcObj.ExamStatus = ds.Tables[0].Rows[0]["ExamStatus"].ToString();
+                    pcObj.Attempts = (ds.Tables[0].Rows[0]["Attempts"].ToString() == String.Empty) ? String.Empty : ds.Tables[0].Rows[0]["Attempts"].ToString();
+                    pcObj.ExamDate = (ds.Tables[0].Rows[0]["ExamDate"] == DBNull.Value) ? DateTime.MinValue : Convert.ToDateTime(ds.Tables[0].Rows[0]["ExamDate"]);
+                    pcObj.EmailAddress = ds.Tables[0].Rows[0]["EmailAddress"].ToString();
+                    pcObj.Address = (ds.Tables[0].Rows[0]["Address"].ToString() == String.Empty) ? String.Empty : ds.Tables[0].Rows[0]["Address"].ToString();
+                    pcObj.Phone = (ds.Tables[0].Rows[0]["Phone"].ToString() == String.Empty) ? 0 : Convert.ToInt32(ds.Tables[0].Rows[0]["Phone"]);
+                    pcObj.InstituteId = (ds.Tables[0].Rows[0]["InstituteId"] == DBNull.Value) ? 0 : Convert.ToInt32(ds.Tables[0].Rows[0]["InstituteId"]);
+                    pcObj.AcademyId = (ds.Tables[0].Rows[0]["AcademyId"] == DBNull.Value) ? 0 : Convert.ToInt32(ds.Tables[0].Rows[0]["AcademyId"]);
+                    pcObj.SiteId = Convert.ToInt32(ds.Tables[0].Rows[0]["SiteId"]);
+                    return pcObj;
+
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
+
+        public void UpdatePearsonCandidate(PearsonCandidate pcObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "UpdatePrometricCandidate";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("IdParam", pcObj.Id);
+                cmd.Parameters.AddWithValue("SiteIdParam", pcObj.SiteId);
+                cmd.Parameters.AddWithValue("FirstNameParam", pcObj.FirstName);
+                cmd.Parameters.AddWithValue("LastNameParam", pcObj.LastName);
+                cmd.Parameters.AddWithValue("ExamNatureParam", pcObj.ExamNature);
+                cmd.Parameters.AddWithValue("ExamIdParam", pcObj.ExamId);
+                cmd.Parameters.AddWithValue("InstituteIdParam", pcObj.InstituteId);
+                cmd.Parameters.AddWithValue("AcademyIdParam", pcObj.AcademyId);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void DeletePearsonCandidate(int id)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "DeletePearsonCandidate";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("IdParam", id);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
         #endregion
     }
         

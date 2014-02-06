@@ -9,21 +9,22 @@ using WcfService1.HelperClass;
 namespace WcfService1
 {
     [ServiceContract]
-    public interface IInstitute
+    public interface IExpense
     {
         [OperationContract]
-        List<Institute> GetAllInstitutes();
+        List<Expense> getAllExpenses();
 
         [OperationContract]
-        void AddInstitute(Institute instiObj);
+        Expense getExpense(int id);
 
         [OperationContract]
-        Institute getInstitute(int id);
+        void AddExpense(Expense expObj);
 
         [OperationContract]
-        void UpdateInstitute(Institute instiObj);
+        void UpdateExpense(Expense expObj);
 
         [OperationContract]
-        void DeleteInstitute(int id);
+        void DeleteExpense(int id);
+
     }
 }

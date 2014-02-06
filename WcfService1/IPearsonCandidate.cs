@@ -9,24 +9,24 @@ using WcfService1.HelperClass;
 namespace WcfService1
 {
     [ServiceContract]
-    public interface IPrometricCandidate
+    public interface IPearsonCandidate
     {
         [OperationContract]
-        List<PrometricCandidate> GetAllPrometricCandidates();
+        List<PearsonCandidate> GetAllPearsonCandidates();
 
         [OperationContract]
-        void BulkUploadPrometricCandidates(FileData inputexcel);
+        void BulkUploadPearsonCandidates(FileData inputexcel);
 
         [OperationContract]
-        void AddPrometricCandidate(PrometricCandidate pcObj);
+        void AddPearsonCandidate(PearsonCandidate pcObj);
 
         [OperationContract]
-        PrometricCandidate getPrometricCandidate(int id);
+        PearsonCandidate getPearsonCandidate(int id);
 
         [OperationContract]
-        void UpdatePrometricCandidate(PrometricCandidate pcObj);
+        void UpdatePearsonCandidate(PearsonCandidate pcObj);
 
         [OperationContract]
-        void DeletePrometricCandidate(int id);
+        void DeletePearsonCandidate(int id);
     }
 }
