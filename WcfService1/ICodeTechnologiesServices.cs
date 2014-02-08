@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CodeTechnologiesWCF;
 using System.ServiceModel;
+using WcfService1.HelperClass.Exams;
+using WcfService1.HelperClass;
+
 
 namespace WcfService1
 {

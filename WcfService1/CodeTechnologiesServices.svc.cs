@@ -11,6 +11,7 @@ using System.Configuration;
 using MySql.Data.MySqlClient;
 using WcfService1;
 using WcfService1.HelperClass;
+using WcfService1.HelperClass.Exams;
 using System.Web.Hosting;
 using System.IO;
 using System.Data.OleDb;
@@ -331,7 +332,6 @@ namespace CodeTechnologiesWCF
             }
         }
         #endregion
-
 
         #region "PrometricCandidate"
         public List<PrometricCandidate> GetAllPrometricCandidates()
@@ -1013,7 +1013,45 @@ namespace CodeTechnologiesWCF
         #region "Institute"
         public List<Institute> GetAllInstitutes()
         {
-            throw new NotImplementedException();
+            MySqlConnection connection = new MySqlConnection();
+            List<Institute> institutes = new List<Institute>();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "GetAllInstitutes";
+                cmd.Connection = connection;
+                MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                da.Fill(ds);
+
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    Institute instiObj = new Institute();
+                    instiObj.Id = Convert.ToInt32(dr["Id"]);
+                    instiObj.Name = dr["Name"].ToString();
+                    instiObj.POCName = dr["POCName"].ToString();
+                    instiObj.Phone = Convert.ToInt32(dr["Phone"]);
+                    instiObj.Email = dr["Email"].ToString();
+                    instiObj.Address = dr["Address"].ToString();
+                    instiObj.CreditAllowed = Convert.ToInt32(dr["CreditAllowed"]);
+                    instiObj.CreditRemaining = Convert.ToInt32(dr["CreditRemaining"]);
+
+                    institutes.Add(instiObj);
+                }
+                return institutes;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
         }
 
         public void AddInstitute(Institute instiObj)
@@ -1027,14 +1065,14 @@ namespace CodeTechnologiesWCF
                 connection.Open();
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandText = "AddInstitute";
-                cmd.Connection = connection;                
+                cmd.Connection = connection;
                 cmd.Parameters.AddWithValue("NameParam", instiObj.Name);
                 cmd.Parameters.AddWithValue("POCNameParam", instiObj.POCName);
                 cmd.Parameters.AddWithValue("PhoneParam", instiObj.Phone);
                 cmd.Parameters.AddWithValue("EmailParam", instiObj.Email);
                 cmd.Parameters.AddWithValue("AddressParam", instiObj.Address);
                 cmd.Parameters.AddWithValue("CreditAllowedParam", instiObj.CreditAllowed);
-                cmd.Parameters.AddWithValue("CreditRemainingParam", instiObj.CreditRemaining);                
+                cmd.Parameters.AddWithValue("CreditRemainingParam", instiObj.CreditRemaining);
                 cmd.ExecuteNonQuery();
             }
             catch (Exception e)
@@ -1045,22 +1083,102 @@ namespace CodeTechnologiesWCF
             {
                 connection.Close();
                 cmd.Dispose();
-            }            
+            }
         }
 
         public Institute getInstitute(int id)
         {
-            throw new NotImplementedException();
+            using (MySqlConnection connection = new MySqlConnection())
+            {
+                DataSet ds = new DataSet();
+                MySqlCommand cmd = new MySqlCommand();
+                try
+                {
+                    connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                    connection.Open();
+                    cmd.Connection = connection;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "GetInstitute";
+                    cmd.Parameters.AddWithValue("@instituteId", id);
+                    MySqlDataAdapter da = new MySqlDataAdapter();
+                    da.SelectCommand = cmd;
+                    da.Fill(ds);
+                    Institute instiObj = new Institute();
+                    instiObj.Id = Convert.ToInt32(ds.Tables[0].Rows[0]["Id"]);
+                    instiObj.Name = ds.Tables[0].Rows[0]["Name"].ToString();
+                    instiObj.POCName = ds.Tables[0].Rows[0]["POCName"].ToString();
+                    instiObj.Phone = Convert.ToInt32(ds.Tables[0].Rows[0]["Phone"]);
+                    instiObj.Email = ds.Tables[0].Rows[0]["Email"].ToString();
+                    instiObj.Address = ds.Tables[0].Rows[0]["Address"].ToString();
+                    instiObj.CreditAllowed = Convert.ToInt32(ds.Tables[0].Rows[0]["CreditAllowed"]);
+                    instiObj.CreditRemaining = Convert.ToInt32(ds.Tables[0].Rows[0]["CreditRemaining"]);
+
+                    return instiObj;
+
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
         }
 
         public void UpdateInstitute(Institute instiObj)
         {
-            throw new NotImplementedException();
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "UpdateInstitute";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("instituteId", instiObj.Id);
+                cmd.Parameters.AddWithValue("NameParam", instiObj.Name);
+                cmd.Parameters.AddWithValue("POCNameParam", instiObj.POCName);
+                cmd.Parameters.AddWithValue("PhoneParam", instiObj.Phone);
+                cmd.Parameters.AddWithValue("EmailParam", instiObj.Email);
+                cmd.Parameters.AddWithValue("AddressParam", instiObj.Address);
+                cmd.Parameters.AddWithValue("CreditAllowedParam", instiObj.CreditAllowed);
+                cmd.Parameters.AddWithValue("CreditRemainingParam", instiObj.CreditRemaining);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
         }
 
-        public void DeleteInstitute(int id)
+        public void DeleteInstitute(int id)     // For Editing...
         {
-            throw new NotImplementedException();
+            // This code doesn't work as ID column in Institute table is a foreign key for InstituteId column in Mail table
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "DeleteInstitute";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("instituteId", id);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
         }
 
         #endregion
@@ -1485,6 +1603,172 @@ namespace CodeTechnologiesWCF
             }
         }
         #endregion
-    }
-        
+
+        #region "Exam Training"
+
+        public List<ExamTrainings> GetAllExamTrainings()
+        {
+            MySqlConnection connection = new MySqlConnection();
+            List<ExamTrainings> trainings = new List<ExamTrainings>();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "GetAllExamTrainings";
+                cmd.Connection = connection;
+                MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                da.Fill(ds);
+
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    ExamTrainings trngObj = new ExamTrainings();
+                    trngObj.Id = Convert.ToInt32(dr["Id"]);
+                    trngObj.ExamId = dr["ExamId"].ToString();
+                    trngObj.StartDate = Convert.ToDateTime(dr["StartDate"]);
+                    trngObj.EndDate = Convert.ToDateTime(dr["EndDate"]);
+                    trngObj.TrainingCost = Convert.ToInt32(dr["TrainingCost"]);
+                    trngObj.TotalAmountReceived = Convert.ToInt32(dr["TotalAmountReceived"]);
+                    trngObj.TrainerId = Convert.ToInt32(dr["TrainerId"]);
+
+                    trainings.Add(trngObj);
+                }
+                return trainings;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void AddExamTraining(ExamTrainings trngObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "AddExamTrainings";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("ExamIdParam", trngObj.ExamId);
+                cmd.Parameters.AddWithValue("StartDateParam", trngObj.StartDate);
+                cmd.Parameters.AddWithValue("EndDateParam", trngObj.EndDate);
+                cmd.Parameters.AddWithValue("TrainingCostParam", trngObj.TrainingCost);
+                cmd.Parameters.AddWithValue("TotalAmountReceivedParam", trngObj.TotalAmountReceived);
+                cmd.Parameters.AddWithValue("TrainerIdParam", trngObj.TrainerId);                
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public ExamTrainings getExamTraining(int id)
+        {
+            using (MySqlConnection connection = new MySqlConnection())
+            {
+                DataSet ds = new DataSet();
+                MySqlCommand cmd = new MySqlCommand();
+                try
+                {
+                    connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                    connection.Open();
+                    cmd.Connection = connection;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "GetExamTraining";
+                    cmd.Parameters.AddWithValue("@examId", id);
+                    MySqlDataAdapter da = new MySqlDataAdapter();
+                    da.SelectCommand = cmd;
+                    da.Fill(ds);
+                    ExamTrainings trngObj = new ExamTrainings();
+                    trngObj.Id = Convert.ToInt32(ds.Tables[0].Rows[0]["Id"]);
+                    trngObj.ExamId = ds.Tables[0].Rows[0]["ExamId"].ToString();
+                    trngObj.StartDate = Convert.ToDateTime(ds.Tables[0].Rows[0]["StartDate"]);
+                    trngObj.EndDate = Convert.ToDateTime(ds.Tables[0].Rows[0]["EndDate"]);
+                    trngObj.TrainingCost = Convert.ToInt32(ds.Tables[0].Rows[0]["TrainingCost"]);
+                    trngObj.TotalAmountReceived = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalAmountReceived"]);
+                    trngObj.TrainerId = Convert.ToInt32(ds.Tables[0].Rows[0]["TrainerId"]);
+
+                    return trngObj;
+
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
+
+        public void UpdateInstitute(ExamTrainings trngObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "UpdateExamTraining";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("NameParam", trngObj.ExamId);
+                cmd.Parameters.AddWithValue("POCNameParam", trngObj.StartDate);
+                cmd.Parameters.AddWithValue("PhoneParam", trngObj.EndDate);
+                cmd.Parameters.AddWithValue("EmailParam", trngObj.TrainingCost);
+                cmd.Parameters.AddWithValue("AddressParam", trngObj.TotalAmountReceived);
+                cmd.Parameters.AddWithValue("CreditAllowedParam", trngObj.TrainerId); 
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void DeleteExamTraining(int id)     
+        {           
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "DeleteExamTraining";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("instituteId", id);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+        #endregion        
+    }        
 }

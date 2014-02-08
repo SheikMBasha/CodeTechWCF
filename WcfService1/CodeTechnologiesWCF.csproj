@@ -82,6 +82,7 @@
     <Compile Include="HelperClass\Exams\ExamCodes.cs" />
     <Compile Include="HelperClass\Exams\ExamNature.cs" />
     <Compile Include="HelperClass\Exams\ExamsType.cs" />
+    <Compile Include="HelperClass\Exams\ExamTrainings.cs" />
     <Compile Include="HelperClass\Expense.cs" />
     <Compile Include="HelperClass\Institute.cs" />
     <Compile Include="HelperClass\PearsonCandidate.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="IAcademy.cs" />
     <Compile Include="ICodeTechnologiesServices.cs" />
     <Compile Include="IExams.cs" />
+    <Compile Include="IExamTraining.cs" />
     <Compile Include="IExpense.cs" />
     <Compile Include="IFileUploadService.cs" />
     <Compile Include="IInstitute.cs" />

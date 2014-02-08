@@ -21,8 +21,6 @@ namespace CodeTechnologiesWCF
         List<ExamsType> GetAllExamTypes();
 
         [OperationContract]
-        List<ExamCodes> GetAllExamCodes();
-        
+        List<ExamCodes> GetAllExamCodes();                
     }
-
 }
