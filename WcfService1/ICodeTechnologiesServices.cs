@@ -12,7 +12,7 @@ using WcfService1.HelperClass;
 namespace WcfService1
 {
     [ServiceContract]
-    public interface ICodeTechnologiesServices : IExams, IAcademy, IPrometricCandidate, IPrometric, IPrometricPromotions,IInstitute, IExpense, IPearsonCandidate
+    public interface ICodeTechnologiesServices : IExams, IAcademy, IPrometricCandidate, IPrometric, IPrometricPromotions,IInstitute, IExpense, IPearsonCandidate, ISellingPricing
     {
     }
 }

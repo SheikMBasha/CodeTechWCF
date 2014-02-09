@@ -1770,5 +1770,184 @@ namespace CodeTechnologiesWCF
             }
         }
         #endregion        
+    
+        #region "SellingPricing"
+        public List<SellingPricing> GetAllSellingPrices()
+        {
+            MySqlConnection connection = new MySqlConnection();
+            List<SellingPricing> prices = new List<SellingPricing>();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "GetAllSellingPrices";
+                cmd.Connection = connection;
+                MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                da.Fill(ds);
+
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    SellingPricing spObj = new SellingPricing();
+                    spObj.Id = Convert.ToInt32(dr["id"]);
+                    spObj.InstituteId = Convert.ToInt32(dr["InstituteId"]);
+                    spObj.ClientId = dr["ClientId"].ToString();
+                    spObj.VoucherType = dr["VoucherType"].ToString();
+                    spObj.VoucherNature = dr["VoucherNature"].ToString();
+                    spObj.PriceWithVoucher = Convert.ToDecimal(dr["PriceWithVoucher"]);
+                    spObj.PriceWithoutVoucher = Convert.ToDecimal(dr["PriceWithoutVoucher"]);
+                    spObj.PriceWithTraining = Convert.ToDecimal(dr["PriceWithTraining"]);
+                    spObj.AbroadPrice = Convert.ToDecimal(dr["Abroad"]);
+                    spObj.PriceDate = Convert.ToDateTime(dr["PriceDate"]);
+
+                    prices.Add(spObj);
+                }
+                return prices;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void AddNewPricing(SellingPricing pricing)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "AddSellingPrice";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("InstituteIdParam", pricing.InstituteId);
+                cmd.Parameters.AddWithValue("ClientIdParam", pricing.ClientId);
+                cmd.Parameters.AddWithValue("VoucherTypeParam", pricing.VoucherType);
+                cmd.Parameters.AddWithValue("VoucherNatureParam", pricing.VoucherNature);
+                cmd.Parameters.AddWithValue("PriceWithVoucherParam", pricing.PriceWithVoucher);
+                cmd.Parameters.AddWithValue("PriceWithoutVoucherParam", pricing.PriceWithoutVoucher);
+                cmd.Parameters.AddWithValue("PriceWithTrainingParam", pricing.PriceWithTraining);
+                cmd.Parameters.AddWithValue("AbroadParam", pricing.AbroadPrice);
+                cmd.Parameters.AddWithValue("PriceDateParam", pricing.PriceDate);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public SellingPricing GetPricing(int id)
+        {
+            using (MySqlConnection connection = new MySqlConnection())
+            {
+                DataSet ds = new DataSet();
+                MySqlCommand cmd = new MySqlCommand();
+                try
+                {
+                    connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                    connection.Open();
+                    cmd.Connection = connection;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "GetSellingPrice";
+                    cmd.Parameters.AddWithValue("IdParam", id);
+                    MySqlDataAdapter da = new MySqlDataAdapter();
+                    da.SelectCommand = cmd;
+                    da.Fill(ds);
+
+                    SellingPricing spObj = new SellingPricing();
+                    spObj.Id = Convert.ToInt32(ds.Tables[0].Rows[0]["id"]);
+                    spObj.InstituteId = Convert.ToInt32(ds.Tables[0].Rows[0]["InstituteId"]);
+                    spObj.ClientId = ds.Tables[0].Rows[0]["ClientId"].ToString();
+                    spObj.VoucherType = ds.Tables[0].Rows[0]["VoucherType"].ToString();
+                    spObj.VoucherNature = ds.Tables[0].Rows[0]["VoucherNature"].ToString();
+                    spObj.PriceWithVoucher = Convert.ToDecimal(ds.Tables[0].Rows[0]["PriceWithVoucher"]);
+                    spObj.PriceWithoutVoucher = Convert.ToDecimal(ds.Tables[0].Rows[0]["PriceWithoutVoucher"]);
+                    spObj.PriceWithTraining = Convert.ToDecimal(ds.Tables[0].Rows[0]["PriceWithTraining"]);
+                    spObj.AbroadPrice = Convert.ToDecimal(ds.Tables[0].Rows[0]["Abroad"]);
+                    spObj.PriceDate = Convert.ToDateTime(ds.Tables[0].Rows[0]["PriceDate"]);
+
+                    return spObj;
+
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
+
+        public void UpdatePricing(SellingPricing pricing)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "UpdateSellingPrice";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("IdParam", pricing.Id);
+                cmd.Parameters.AddWithValue("InstituteIdParam", pricing.InstituteId);
+                cmd.Parameters.AddWithValue("ClientIdParam", pricing.ClientId);
+                cmd.Parameters.AddWithValue("VoucherTypeParam", pricing.VoucherType);
+                cmd.Parameters.AddWithValue("VoucherNatureParam", pricing.VoucherNature);
+                cmd.Parameters.AddWithValue("PriceWithVoucherParam", pricing.PriceWithVoucher);
+                cmd.Parameters.AddWithValue("PriceWithoutVoucherParam", pricing.PriceWithoutVoucher);
+                cmd.Parameters.AddWithValue("PriceWithTrainingParam", pricing.PriceWithTraining);
+                cmd.Parameters.AddWithValue("AbroadParam", pricing.AbroadPrice);
+                cmd.Parameters.AddWithValue("PriceDateParam", pricing.PriceDate);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void DeletePricing(int id)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "DeleteSellingPrice";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("IdParam", id);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+        #endregion
     }        
 }
