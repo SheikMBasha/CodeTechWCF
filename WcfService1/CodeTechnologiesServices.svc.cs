@@ -22,7 +22,8 @@ namespace CodeTechnologiesWCF
     // NOTE: In order to launch WCF Test Client for testing this service, please select Service1.svc or Service1.svc.cs at the Solution Explorer and start debugging.
     public class CodeTechnologiesServices : ICodeTechnologiesServices
     {
-        #region "GetAllExamNature"
+        #region "ExamNature"
+
         public List<ExamNature> GetAllExamNature()
         {
             MySqlConnection connection = new MySqlConnection();
@@ -59,9 +60,118 @@ namespace CodeTechnologiesWCF
                 cmd.Dispose();
             }
         }
+
+        public void AddExamNature(ExamNature natureObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "AddExamNature";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("ExamNatureId", natureObj.Id);                
+                cmd.Parameters.AddWithValue("NameParam", natureObj.Name);                
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public ExamNature getExamNature(int id)
+        {
+            using (MySqlConnection connection = new MySqlConnection())
+            {
+                DataSet ds = new DataSet();
+                MySqlCommand cmd = new MySqlCommand();
+                try
+                {
+                    connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                    connection.Open();
+                    cmd.Connection = connection;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "GetExamNature";
+                    cmd.Parameters.AddWithValue("ExamNatureId", id);
+                    MySqlDataAdapter da = new MySqlDataAdapter();
+                    da.SelectCommand = cmd;
+                    da.Fill(ds);
+                    ExamNature natureObj = new ExamNature();
+                    natureObj.Id = ds.Tables[0].Rows[0]["Id"].ToString();
+                    natureObj.Name = ds.Tables[0].Rows[0]["Name"].ToString();
+
+                    return natureObj;
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
+
+        public void UpdateExamNature(ExamNature natureObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "UpdateExamNature";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("Id", natureObj.Id);
+                cmd.Parameters.AddWithValue("NameParam", natureObj.Name);
+                
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void DeleteExamNature(int id)    
+        {            
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "DeleteExamNature";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("ExamNatureId", id);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
         #endregion
 
-        #region "GetAllExamTypes"
+        #region "ExamTypes"
         public List<ExamsType> GetAllExamTypes()
         {
             MySqlConnection connection = new MySqlConnection();
@@ -98,6 +208,118 @@ namespace CodeTechnologiesWCF
                 cmd.Dispose();
             }
         }
+
+        public void AddExamType(ExamsType typObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "AddExamType";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("ExamTypeId", typObj.Id);
+                cmd.Parameters.AddWithValue("ExamTypeParam", typObj.ExamType);                
+                
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public ExamsType getExamType(int id)
+        {
+            using (MySqlConnection connection = new MySqlConnection())
+            {
+                DataSet ds = new DataSet();
+                MySqlCommand cmd = new MySqlCommand();
+                try
+                {
+                    connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                    connection.Open();
+                    cmd.Connection = connection;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "GetExamType";
+                    cmd.Parameters.AddWithValue("ExamTypeId", id);
+                    MySqlDataAdapter da = new MySqlDataAdapter();
+                    da.SelectCommand = cmd;
+                    da.Fill(ds);
+                    ExamsType typObj = new ExamsType();
+                    typObj.Id = ds.Tables[0].Rows[0]["Id"].ToString();
+                    typObj.ExamType = ds.Tables[0].Rows[0]["ExamType"].ToString();
+
+                    return typObj;
+
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
+
+        public void UpdateExamType(ExamsType typObj)
+        {
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "UpdateExamType";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("ExamTypeId", typObj.Id);
+                cmd.Parameters.AddWithValue("NameParam", typObj.ExamType);
+                
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
+        public void DeleteExamType(int id)     
+        {           
+            MySqlConnection connection = new MySqlConnection();
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand();
+            try
+            {
+                connection.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnection"].ConnectionString;
+                connection.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "DeleteExamType";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("ExamTypeId", id);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                connection.Close();
+                cmd.Dispose();
+            }
+        }
+
         #endregion
 
         #region "GetAllExamCodes"
@@ -1099,7 +1321,7 @@ namespace CodeTechnologiesWCF
                     cmd.Connection = connection;
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.CommandText = "GetInstitute";
-                    cmd.Parameters.AddWithValue("@instituteId", id);
+                    cmd.Parameters.AddWithValue("instituteId", id);
                     MySqlDataAdapter da = new MySqlDataAdapter();
                     da.SelectCommand = cmd;
                     da.Fill(ds);
@@ -1948,6 +2170,6 @@ namespace CodeTechnologiesWCF
                 cmd.Dispose();
             }
         }
-        #endregion
+        #endregion        
     }        
 }
